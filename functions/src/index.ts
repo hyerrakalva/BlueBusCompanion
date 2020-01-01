@@ -59,7 +59,7 @@ async function get_arrival_time(route_name: any, coordinates: [number, number]) 
     return "An error has occurred."
 }
 
-export const eta_fulfillment = functions.https.onRequest(app);
+export const fulfillment = functions.https.onRequest(app);
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
