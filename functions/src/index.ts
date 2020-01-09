@@ -1,16 +1,33 @@
 import * as functions from 'firebase-functions';
 import fetch from 'node-fetch'
-import { dialogflow, /*SimpleResponse, BasicCard, Button, Image*/ } from 'actions-on-google'
+import { dialogflow, Permission, /*SimpleResponse, BasicCard, Button, Image*/ } from 'actions-on-google'
 
 const app = dialogflow({ debug: true });
 
-app.intent('ETA Fetcher', async (conv, {route_name}) => {
-    const answer = await get_arrival_time(route_name, [42.277797, -83.735203]);
-    conv.speechBiasing = [<string>route_name];
-    conv.close(answer);
+var user_route: any;
+
+app.intent('ETA Fetcher', (conv, {route_name}) => {
+    user_route = route_name
+    conv.ask(new Permission({
+        context: 'To find the closest stop to your location',
+        permissions: 'DEVICE_PRECISE_LOCATION',
+    }));
+})
+
+app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => {
+    const {location} = conv.device;
+    if (locationGranted && location) {
+        const answer = await get_arrival_time(user_route, [location.coordinates?.latitude, location.coordinates?.longitude]);
+        conv.speechBiasing = [<string>user_route];
+        conv.ask(answer);
+        conv.ask("Anything else?");        
+    }
+    else {
+        conv.close("Please enable location access.")
+    }
 });
 
-async function get_arrival_time(route_name: any, coordinates: [number, number]) {
+async function get_arrival_time(route_name: any, coordinates: [any, any]) {
     let response = await fetch("http://mbus.doublemap.com/map/v2/routes");
     const routes = await response.json();
     
