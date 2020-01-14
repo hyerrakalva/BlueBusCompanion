@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import fetch from 'node-fetch'
-import { dialogflow, Permission, /*SimpleResponse, BasicCard, Button, Image*/ } from 'actions-on-google'
+import { dialogflow, Permission, BasicCard, Button, Image /*SimpleResponse, Button, Image*/ } from 'actions-on-google'
 
 const app = dialogflow({ debug: true });
 
@@ -19,7 +19,20 @@ app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => 
     if (locationGranted && location) {
         const answer = await get_arrival_time(user_route, [location.coordinates?.latitude, location.coordinates?.longitude]);
         conv.speechBiasing = [<string>user_route];
-        conv.ask(answer);
+        conv.ask(answer.answer);
+        conv.ask(new BasicCard({
+            subtitle: answer.lat + ', ' + answer.lon,
+            title: 'Directions to ' + answer.stop,
+            buttons: new Button({
+                title: 'Go to Google Maps',
+                url: "https://www.google.com/maps/search/?api=1&query=" + answer['lat'] + ',' + answer['lon'],
+            }),
+            image: new Image({
+                url: "https://i.pinimg.com/originals/81/dd/73/81dd732f9aa041d4d97c2575f598ffb5.png",
+                alt: "https://storage.googleapis.com/actionsresources/logo_assistant_2x_64dp.png"
+            }),
+            display: 'WHITE',
+        }));
         conv.ask("Anything else?");        
     }
     else {
@@ -39,7 +52,7 @@ async function get_arrival_time(route_name: any, coordinates: [any, any]) {
         }
     }
     if (route_obj === null) {
-        return "Sorry, but the " + route_name + " route could not be found at this time.";
+        return {answer: "Sorry, but the " + route_name + " route could not be found at this time.", lat: String(null), lon: String(null), stop: String(null)};
     }
     
     const route_stop_ids: Array<String> = route_obj['stops'];
@@ -69,11 +82,12 @@ async function get_arrival_time(route_name: any, coordinates: [any, any]) {
 
     for (item of eta['etas'][optimal_stop['id'].toString()]['etas']) {
         if (item['route'] === route_obj['id']) {
-            return route_name + " will arrive at " + optimal_stop['name'] + " in " + item['avg'] + ((item['avg'] === 1) ? " minute." : " minutes.");
+            const final_answer = {answer: route_name + " will arrive at " + optimal_stop['name'] + " in " + item['avg'] + ((item['avg'] === 1) ? " minute." : " minutes."), lat: String(optimal_stop['lat']), lon: String(optimal_stop['lon']), stop: optimal_stop['name']};
+            return final_answer;
         }
     }
 
-    return "An error has occurred."
+    return {answer: "An error has occurred.", lat: String(null), lon: String(null), stop: String(null)};
 }
 
 export const fulfillment = functions.https.onRequest(app);
