@@ -1,0 +1,3 @@
+# Blue Bus Companion
+
+A Google Assistant service that provides you with information on campus buses at the University of Michigan with the help of the publicly available DoubleMap API.
