@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import fetch from 'node-fetch'
-import { dialogflow, Permission, BasicCard, Button, Image /*SimpleResponse, Button, Image*/ } from 'actions-on-google'
+import { dialogflow, Permission, BasicCard, Button, Image, LinkOutSuggestion, Suggestions } from 'actions-on-google'
 
 const app = dialogflow({ debug: true });
 
