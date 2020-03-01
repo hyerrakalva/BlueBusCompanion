@@ -48,6 +48,19 @@ app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => 
     }
 });
 
+app.intent('Check Route Status', async (conv, {bus_route}) => {
+    const active = await route_status(bus_route);
+
+    if (active) {
+        conv.ask("Yes, " + bus_route + " is currently active.");
+        conv.ask(new Suggestions(bus_route + " ETA"));
+    }
+    else {
+        conv.ask("No, " + bus_route + " is not running right now.");
+    }
+    conv.ask("Anything else?");
+})
+
 async function get_arrival_time(route_name: any, coordinates: [any, any]) {
     let response = await fetch("http://mbus.doublemap.com/map/v2/routes");
     const routes = await response.json();
@@ -104,6 +117,25 @@ async function time_from_stop(user_coordinates: [string, string], stop_coordinat
     const eta = await response.json()
 
     return eta['rows'][0]['elements'][0]['duration'];
+}
+
+async function route_status(route_name: any) {
+    let response = await fetch("http://mbus.doublemap.com/map/v2/routes");
+    const routes = await response.json();
+    
+    let route_obj = null;
+    let item;
+    for (item of routes) {
+        if (item['name'].indexOf(route_name) !== -1) {
+            route_obj = item;
+        }
+    }
+    if (route_obj === null) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 export const fulfillment = functions.https.onRequest(app);
