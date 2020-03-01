@@ -9,7 +9,7 @@ var user_route: any;
 app.intent('ETA Fetcher', (conv, {route_name}) => {
     user_route = route_name
     conv.ask(new Permission({
-        context: 'To find the closest stop to your location',
+        context: 'To find your closest stop',
         permissions: 'DEVICE_PRECISE_LOCATION',
     }));
 })
