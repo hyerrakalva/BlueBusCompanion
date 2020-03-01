@@ -108,7 +108,7 @@ async function get_arrival_time(route_name: any, coordinates: [any, any]) {
         }
     }
 
-    return {answer: "An error has occurred.", lat: String(null), lon: String(null), stop: String(null)};
+    return {answer: "Sorry, but an estimated time for " + route_name + " could not be found.", lat: String(null), lon: String(null), stop: String(null)};
 }
 
 async function time_from_stop(user_coordinates: [string, string], stop_coordinates: [string, string]) {
