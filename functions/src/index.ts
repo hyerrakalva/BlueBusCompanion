@@ -44,7 +44,7 @@ app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => 
         conv.ask("Anything else?");        
     }
     else {
-        conv.close("Please enable location access.")
+        conv.close("Please enable location access to find the closest stop to you.");
     }
 });
 
