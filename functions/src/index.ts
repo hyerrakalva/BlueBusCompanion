@@ -24,7 +24,7 @@ app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => 
             subtitle: answer.lat + ', ' + answer.lon,
             title: 'Directions to ' + answer.stop,
             buttons: new Button({
-                title: 'Go to Google Maps',
+                title: 'Navigate (' + distance['text'] + ')',
                 url: "https://www.google.com/maps/search/?api=1&query=" + answer['lat'] + ',' + answer['lon'],
             }),
             image: new Image({
