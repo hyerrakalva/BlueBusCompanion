@@ -28,7 +28,7 @@ app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => 
                 url: "https://www.google.com/maps/search/?api=1&query=" + answer['lat'] + ',' + answer['lon'],
             }),
             image: new Image({
-                url: "https://i.pinimg.com/originals/81/dd/73/81dd732f9aa041d4d97c2575f598ffb5.png",
+                url: "https://lh3.googleusercontent.com/9tLfTpdILdHDAvGrRm7GdbjWdpbWSMOa0csoQ8pUba9tLP8tq7M4Quks1xuMQAVnAxVfryiDXRzZ-KDnkPv8Sm4g_YFom1ltQHjQ6Q",
                 alt: "https://storage.googleapis.com/actionsresources/logo_assistant_2x_64dp.png"
             }),
             display: 'WHITE',
