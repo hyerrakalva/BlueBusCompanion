@@ -98,6 +98,14 @@ async function get_arrival_time(route_name: any, coordinates: [any, any]) {
     return {answer: "An error has occurred.", lat: String(null), lon: String(null), stop: String(null)};
 }
 
+async function time_from_stop(user_coordinates: [string, string], stop_coordinates: [string, string]) {
+    let api_url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + user_coordinates[0] + ',' + user_coordinates[1] + "&destinations=" + stop_coordinates[0] + ',' + stop_coordinates[1] + "&mode=walking&key=" + functions.config().gmaps.key;
+    let response = await fetch(api_url);
+    const eta = await response.json()
+
+    return eta['rows'][0]['elements'][0]['duration'];
+}
+
 export const fulfillment = functions.https.onRequest(app);
 
 // // Start writing Firebase Functions
