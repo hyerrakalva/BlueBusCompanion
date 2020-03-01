@@ -20,7 +20,15 @@ app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => 
         const answer = await get_arrival_time(user_route, [location.coordinates?.latitude, location.coordinates?.longitude]);
         conv.speechBiasing = [<string>user_route];
         conv.ask(answer.answer);
-        conv.ask(new BasicCard({
+
+        // Show suggestion card linking to directions to stop on Google Maps
+        if (answer['lat'] != 'null' && answer['lon'] != 'null') {
+            conv.ask(new LinkOutSuggestion({
+                name: 'directions to stop',
+                url: "https://www.google.com/maps/search/?api=1&query=" + answer['lat'] + ',' + answer['lon'],
+            }));
+        }
+        /*conv.ask(new BasicCard({
             subtitle: answer.lat + ', ' + answer.lon,
             title: 'Directions to ' + answer.stop,
             buttons: new Button({
@@ -32,7 +40,7 @@ app.intent('ETA Fetcher Helper', async (conv, {route_name}, locationGranted) => 
                 alt: "https://storage.googleapis.com/actionsresources/logo_assistant_2x_64dp.png"
             }),
             display: 'WHITE',
-        }));
+        }));*/
         conv.ask("Anything else?");        
     }
     else {
